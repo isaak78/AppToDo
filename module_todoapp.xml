@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_todoapp" default="compile.module.todoapp">
+  <dirname property="module.todoapp.basedir" file="${ant.file.module_todoapp}"/>
+  
+  <property name="module.jdk.home.todoapp" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.todoapp" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.todoapp" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.todoapp" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="todoapp.output.dir" value="${module.todoapp.basedir}/out/production/ToDoApp"/>
+  <property name="todoapp.testoutput.dir" value="${module.todoapp.basedir}/out/test/ToDoApp"/>
+  
+  <path id="todoapp.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="todoapp.module.production.classpath">
+    <path refid="${module.jdk.classpath.todoapp}"/>
+    <pathelement location="${basedir}/../mysql-connector-java-5.1.40-bin.jar"/>
+    <pathelement location="${basedir}/commons-validator-1.5.1.jar"/>
+  </path>
+  
+  <path id="todoapp.runtime.production.module.classpath">
+    <pathelement location="${todoapp.output.dir}"/>
+    <pathelement location="${basedir}/../mysql-connector-java-5.1.40-bin.jar"/>
+    <pathelement location="${basedir}/commons-validator-1.5.1.jar"/>
+  </path>
+  
+  <path id="todoapp.module.classpath">
+    <path refid="${module.jdk.classpath.todoapp}"/>
+    <pathelement location="${todoapp.output.dir}"/>
+    <pathelement location="${basedir}/../mysql-connector-java-5.1.40-bin.jar"/>
+    <pathelement location="${basedir}/commons-validator-1.5.1.jar"/>
+  </path>
+  
+  <path id="todoapp.runtime.module.classpath">
+    <pathelement location="${todoapp.testoutput.dir}"/>
+    <pathelement location="${todoapp.output.dir}"/>
+    <pathelement location="${basedir}/../mysql-connector-java-5.1.40-bin.jar"/>
+    <pathelement location="${basedir}/commons-validator-1.5.1.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.todoapp">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.todoapp">
+    <patternset refid="excluded.from.module.todoapp"/>
+  </patternset>
+  
+  <path id="todoapp.module.sourcepath">
+    <dirset dir="${module.todoapp.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.todoapp" depends="compile.module.todoapp.production,compile.module.todoapp.tests" description="Compile module ToDoApp"/>
+  
+  <target name="compile.module.todoapp.production" depends="register.custom.compilers" description="Compile module ToDoApp; production classes">
+    <mkdir dir="${todoapp.output.dir}"/>
+    <javac2 destdir="${todoapp.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.todoapp}/javac">
+      <compilerarg line="${compiler.args.todoapp}"/>
+      <bootclasspath refid="todoapp.module.bootclasspath"/>
+      <classpath refid="todoapp.module.production.classpath"/>
+      <src refid="todoapp.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.todoapp"/>
+    </javac2>
+    
+    <copy todir="${todoapp.output.dir}">
+      <fileset dir="${module.todoapp.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.todoapp.tests" depends="register.custom.compilers,compile.module.todoapp.production" description="compile module ToDoApp; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.todoapp" description="cleanup module">
+    <delete dir="${todoapp.output.dir}"/>
+    <delete dir="${todoapp.testoutput.dir}"/>
+  </target>
+</project>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="475.0" prefWidth="508.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FXMLStudentController">
+    <children>
+        <Label fx:id="label" layoutX="106.0" layoutY="438.0" minHeight="16" minWidth="69" prefHeight="26.0" prefWidth="338.0" />
+      <TableView fx:id="tableStudeent" layoutX="27.0" layoutY="73.0" prefHeight="256.0" prefWidth="453.0">
+        <columns>
+            <TableColumn fx:id="columnId" minWidth="0.0" prefWidth="35.0" text="ID" />
+          <TableColumn fx:id="columnName" prefWidth="120.0" text="Nome" />
+          <TableColumn fx:id="columnApelido" minWidth="0.0" prefWidth="168.0" text="Email" />
+            <TableColumn fx:id="columnCc" prefWidth="186.0" text="Cartao Cidadao" />
+        </columns>
+      </TableView>
+      <Label layoutX="211.0" layoutY="27.0" prefHeight="27.0" prefWidth="122.0" text="Formandos">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnLoad" layoutX="391.0" layoutY="349.0" mnemonicParsing="false" onAction="#connectToDatabase" text="ATUALIZAR" />
+      <ComboBox fx:id="accaoCombo" layoutX="344.0" layoutY="401.0" prefHeight="26.0" prefWidth="92.0" promptText="Acçao" />
+      <ComboBox fx:id="formandoCombo" layoutX="241.0" layoutY="401.0" prefHeight="26.0" prefWidth="63.0" promptText="nº" />
+      <Button layoutX="446.0" layoutY="401.0" mnemonicParsing="false" onAction="#handleButtonAction" text="OK" />
+      <Label layoutX="312.0" layoutY="406.0" text="EM">
+         <padding>
+            <Insets right="5.0" />
+         </padding>
+      </Label>
+      <Label layoutX="59.0" layoutY="406.0" text="ADICIONAR FORMADOR ID:" />
+    </children>
+</AnchorPane>
