@@ -104,7 +104,7 @@ public class FXMLFormController implements Initializable {
                     date_start.setValue(sqlDateIn.toLocalDate());
                     System.out.println("Data Start = "+ldefault);
 
-                }
+                }//todo fix bug date setValue
                 if(date_stop.getValue() != null){
                     date_stop.setValue(today);
                     System.out.println("Data Start = "+ldefault);
@@ -173,7 +173,7 @@ public class FXMLFormController implements Initializable {
             ResultSet rs = conn.createStatement().executeQuery(SQL);
             while(rs.next()){
                 listaAccoes.add(rs.getString("cod_accao"));
-            }
+            }//todo fix bug
             accaoBox.setItems(listaAccoes);
         }
         catch(Exception e){
@@ -201,7 +201,7 @@ public class FXMLFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // TODO fix bugs
     }
 
 }

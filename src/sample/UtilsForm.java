@@ -3,6 +3,8 @@ package sample;
 import javafx.scene.control.Alert;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by pc on 11/18/16.
@@ -11,7 +13,7 @@ import org.apache.commons.validator.routines.EmailValidator;
  *
  * Variante do Check Digit do Cartão do Cidadão baseado no algoritmo de Luhn
  *
- *
+ * * --------------------------------------------------------------------------------------------------------------
  * NIF Tem de ter 9 dígitos;
  * O primeiro dígito tem de ser 1, 2, 5, 6, 8 ou 9;
  * O dígito de controlo (último digíto do NIF) é obtido da seguinte forma:
@@ -19,6 +21,16 @@ import org.apache.commons.validator.routines.EmailValidator;
  * Esta soma tem de ser múltiplo de 11 (quando divídida por 11 dar 0);
  * Subtraír o resto da divisão da soma por 11 a 11;
  * Se o resultado for 10, é assumído o algarismo 0;
+ *
+ * *--------------------------------------------------------------------------------------------------------------
+ * The password policy is:
+ * At least 6 chars
+ *
+ * Contains at least one digit
+ * Contains at least one lower alpha char and one upper alpha char
+ * Contains at least one char within a set of special chars (@#%$^ etc.)
+ * Does not contain space, tab, etc.
+ *
  *
  */
 
@@ -149,6 +161,33 @@ public class UtilsForm {
         }
         return false;
     }
+
+
+    public static ArrayList<String> validaPassword(String password) {
+        ArrayList<String> validationErrors = new ArrayList<>();
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}$")){
+            alertMsg(Alert.AlertType.INFORMATION,("A password deve conter pelo menos 6 caracteres\n" +
+                    "uma letra maiúscula, uma letra minúscula\n" +
+                    "um dígito e um caracter especial"));
+            validationErrors.add("Erro na Password!");
+
+        }
+        return validationErrors;
+    }
+
+    public ArrayList<String> validateUsername(String username)  {
+        ArrayList<String> validationErrors = new ArrayList<>();
+
+        if( !username.matches("[a-zA-Z0-9.\\-_]{3,}")) {
+            validationErrors.add("Erro no Username");
+            alertMsg(Alert.AlertType.INFORMATION,("O username deve conter pelo menos 3 caracteres!"));
+
+        }
+
+        return validationErrors;
+
+    }
+
 
 
 

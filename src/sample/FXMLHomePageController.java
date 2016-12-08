@@ -34,6 +34,7 @@ import java.io.IOException;
 public class FXMLHomePageController implements Initializable {
 
     @FXML private TextField user;
+    @FXML private TextField passcheck;
     @FXML private TextField pass;
     @FXML private ProgressBar progressBar;
     @FXML private Pane progressBarWrapper;
@@ -167,7 +168,9 @@ public class FXMLHomePageController implements Initializable {
             result.add(row);
         }
         UtilsForm.alertMsg(Alert.AlertType.WARNING,("IiiiuUUPPYy!"));
-
+        System.out.println(        isUsernameTaken("x"));
+        System.out.println(        isUsernameTaken("papagaio"));
+        UtilsForm.validaPassword(pass.getText());
       //  insertStatement(query);
         System.out.println(" ArrayList dos Cursos");
         for (String[] res : result)
@@ -284,6 +287,25 @@ public class FXMLHomePageController implements Initializable {
 
         }
     }
+
+    public static boolean isUsernameTaken(String username) throws SQLException {
+        // Connection connection = this.databaseAdapter.getConnection();
+        MysqlConnect dc = null;
+        Connection conn = dc.ConnectDb() ;
+
+
+        PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM pessoa WHERE username =" +
+                " '"+username+"';");
+       // statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        int count = resultSet.getInt(1);
+        if(count == 0) {
+            return false;
+        }
+        return true;
+    }
+
 
     public void updateAccao(){
 

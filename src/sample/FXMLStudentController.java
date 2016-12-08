@@ -50,10 +50,7 @@ public class FXMLStudentController implements Initializable {
 
     private MysqlConnect dc;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-            // TODO
-    }
+
 
     @FXML
     private void connectToDatabase (ActionEvent actionEvent) {
@@ -66,7 +63,7 @@ public class FXMLStudentController implements Initializable {
                     //get string da BD + UserDetails
                     data.add(new UserDetails(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
                 listaFormando.add(rs.getString("id_formando"));
-            }
+            }//todo fix bug
             formandoCombo.setItems(listaFormando);
         } catch (SQLException ex) {
             System.err.println("Erro ---> "+ex);
@@ -82,9 +79,13 @@ public class FXMLStudentController implements Initializable {
         tableStudeent.setItems(data);
         buildAccaoData();
 
+        tableStudeent.getSelectionModel().setCellSelectionEnabled(false);
 
 
+        System.out.println(tableStudeent.getItems());
     }
+
+
 
     private void buildAccaoData(){
         Connection conn = dc.ConnectDb();
@@ -94,8 +95,9 @@ public class FXMLStudentController implements Initializable {
             ResultSet rs = conn.createStatement().executeQuery(SQL);
             while(rs.next()){
                 listaAccoes.add(rs.getString("cod_accao")); //add String curso na list
-            }
-            accaoCombo.setItems(listaAccoes); //Carrega a lista de acçoes/turmas na combobox
+            }//todo fix bug
+
+        accaoCombo.setItems(listaAccoes); //Carrega a lista de acçoes/turmas na combobox
         }
         catch(Exception e){
             e.printStackTrace();
@@ -144,6 +146,10 @@ public class FXMLStudentController implements Initializable {
             }
         }
 
+    }
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // TODO fix bugs
     }
 }
 

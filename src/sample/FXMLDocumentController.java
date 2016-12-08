@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.io.IOException;
 import java.net.URL;
@@ -36,42 +37,104 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Label isConnected;
 
     private MysqlConnect dc;
-
+    int control =1;
     /* Botão de acção do Login (ActionEvent) */
     @FXML
-    private void handleButtonAction(ActionEvent event) throws IOException {
-        
-        
-            System.out.println("----------------[  OK Stage ]----------------");
+    private void handleButtonAction(ActionEvent event) throws IOException, SQLException {
+        System.out.println("----------------[  OK Stage ]----------------");
         /* segundo FMXL para ser chamado, quando as credenciais sao true */
-            Parent home_page_parent =  FXMLLoader.load(getClass().getResource("FXMLHomePage.fxml"));
-            Scene home_page_scene = new Scene(home_page_parent);
-            Stage app_stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        invalid_label.setVisible(false);
+        Parent home_page_parent =  FXMLLoader.load(getClass().getResource("FXMLHomePage.fxml"));
+        Scene home_page_scene = new Scene(home_page_parent);
+        Stage app_stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        invalid_label.setText("Não-autorizado: Acesso negado\ncredenciais inválidas ");
 
         /* se isValidCredentials devolver true o login é valido e é chamado o FXMLHomePage.fxml */
 
 
 
 
+
         if (isValidCredentials()) {
+                control = 1;
                 app_stage.hide();
                 app_stage.setScene(home_page_scene);
                 app_stage.show();
-            }
+        }
             /** se for false é porque na na tabela users da DB não há
              * correspondencia entre o username e a passaword
              * os campos sao limpos e entao é devoldida para o operador
              * uma menssagem de Não-autorizado: Acesso negado  */
 
-            else {
-                username_box.clear();
-                password_box.clear();
-                invalid_label.setText("Não-autorizado: Acesso negado\ncredenciais inválidas");
-            }
+        if(control ==3){
+            control = 0;
+            invalid_label.setVisible(true);
+            //UtilsForm.alertMsg(Alert.AlertType.ERROR,"Não-autorizado:\nExcedeu as "+control+" tentativas de acesso");
+            invalid_label.setText("Excedeu as tentativas de acesso\nBlocked User "
+                    +username_box.getText()+"\nContactar o suporte técnico");
+            lockAccount(username_box.getText());
+            username_box.clear();
+            password_box.clear();
+            //System.exit(0);
+        }else {
+         //username_box.clear();
+            //password_box.clear();
+        invalid_label.setVisible(true);
+        username_box.clear();
+        password_box.clear();
+        control++;
+        }
     }
-    
-    private boolean isValidCredentials()
-    {
+
+
+    private boolean lockAccount(String block) throws SQLException {
+        FXMLHomePageController.isUsernameTaken(block);
+        System.out.println("ate jah");
+        boolean let_in = false;
+        if(!FXMLHomePageController.isUsernameTaken(block)){
+            System.out.println(block);
+            System.out.println("olah mundo");
+
+        }
+
+        Statement stmt = null;
+        try {
+            Connection conn = dc.ConnectDb();
+
+            conn.setAutoCommit(false);
+
+            System.out.println("STATUS ---> Conectado com sucesso!");
+            stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
+                    + " AND password LIKE " + "'" + password_box.getText() + "'" );
+
+            while ( rs.next() ) {
+                if (!(rs.getString("username").isEmpty()) || !(rs.getString("password").isEmpty())) {
+                    String  username = rs.getString("username");
+                    System.out.println( "Username = " + username );
+                    String password = rs.getString("password");
+                    System.out.println("Password = " + password);
+                    let_in = true;
+                }
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            UtilsForm.alertMsg(Alert.AlertType.ERROR,e.toString());
+
+            // System.exit(0);
+        }
+        System.out.println("STATUS ---> operação realizada com sucesso!");
+        return let_in;
+
+    }
+
+
+    private boolean isValidCredentials() {
+
         boolean let_in = false;
         System.out.println( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
             + " AND password LIKE " + "'" + password_box.getText() + "'" );
@@ -104,12 +167,16 @@ public class FXMLDocumentController implements Initializable {
                 System.err.println( e.getClass().getName() + ": " + e.getMessage() );
                 UtilsForm.alertMsg(Alert.AlertType.ERROR,e.toString());
 
-             System.exit(0);
+            // System.exit(0);
             }
             System.out.println("STATUS ---> operação realizada com sucesso!");
             return let_in;
         
     }
+
+
+
+
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
