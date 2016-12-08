@@ -1,4 +1,4 @@
-# AppToDo
+# AppToDo - Form2
 #Aplicação Desktop - PROJECTO FINAL TIS06
 ##UFCD (s) 784-785, 789-791, 781, 786-787, 788, 792-793
 ##Synopsis
