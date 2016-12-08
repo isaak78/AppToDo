@@ -323,7 +323,8 @@ public class FXMLHomePageController implements Initializable {
     }
 
 
-    private void insertStatement(String insert_query){
+    protected static void insertStatement(String insert_query){
+        MysqlConnect dc = null;
 
         Connection conn = null;
         Statement stmt = null;
@@ -391,6 +392,7 @@ public class FXMLHomePageController implements Initializable {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+
         } catch (IOException e) {
             e.printStackTrace();
             return;

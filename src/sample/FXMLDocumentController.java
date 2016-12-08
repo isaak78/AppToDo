@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -7,18 +8,19 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;
 
+import java.io.*;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.IOException;
-import java.net.URL;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /*
@@ -35,9 +37,19 @@ public class FXMLDocumentController implements Initializable {
     @FXML private TextField password_box;
     @FXML private Label invalid_label;
     @FXML private Label isConnected;
+    @FXML private CheckBox checkbox;
 
     private MysqlConnect dc;
     int control =1;
+    private boolean tickEnabled;
+
+    public boolean isTickEnabled() {
+        return tickEnabled;
+    }
+
+
+
+
     /* Botão de acção do Login (ActionEvent) */
     @FXML
     private void handleButtonAction(ActionEvent event) throws IOException, SQLException {
@@ -49,17 +61,31 @@ public class FXMLDocumentController implements Initializable {
         Stage app_stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         invalid_label.setText("Não-autorizado: Acesso negado\ncredenciais inválidas ");
 
-        /* se isValidCredentials devolver true o login é valido e é chamado o FXMLHomePage.fxml */
 
+
+        Properties prop = new Properties();
 
 
 
 
         if (isValidCredentials()) {
-                control = 1;
-                app_stage.hide();
-                app_stage.setScene(home_page_scene);
-                app_stage.show();
+            if(checkbox.isSelected()){
+                System.out.println(" CheckBoX ON");
+                tickEnabled = true;
+                OutputStream output = new FileOutputStream("config.properties");
+                // write login-username to config file
+                prop.setProperty("username", username_box.getText());
+                prop.setProperty("password", password_box.getText());
+                prop.store(output, null);
+            }
+
+            control = 1;
+            app_stage.hide();
+            app_stage.setScene(home_page_scene);
+            app_stage.show();
+
+
+
         }
             /** se for false é porque na na tabela users da DB não há
              * correspondencia entre o username e a passaword
@@ -70,7 +96,7 @@ public class FXMLDocumentController implements Initializable {
             control = 0;
             invalid_label.setVisible(true);
             //UtilsForm.alertMsg(Alert.AlertType.ERROR,"Não-autorizado:\nExcedeu as "+control+" tentativas de acesso");
-            invalid_label.setText("Excedeu as tentativas de acesso\nBlocked User "
+            invalid_label.setText("Blocked User "
                     +username_box.getText()+"\nContactar o suporte técnico");
             lockAccount(username_box.getText());
             username_box.clear();
@@ -87,48 +113,16 @@ public class FXMLDocumentController implements Initializable {
     }
 
 
-    private boolean lockAccount(String block) throws SQLException {
+    private void lockAccount(String block) throws SQLException {
         FXMLHomePageController.isUsernameTaken(block);
-        System.out.println("ate jah");
-        boolean let_in = false;
-        if(!FXMLHomePageController.isUsernameTaken(block)){
-            System.out.println(block);
-            System.out.println("olah mundo");
+        String query = "UPDATE form2.pessoa SET pessoa.estado='1'  WHERE (pessoa.username ='"+block+"' And cc <>'0');";
+        if(FXMLHomePageController.isUsernameTaken(block)){
+            System.out.println(query);
+            FXMLHomePageController.insertStatement(query);
+            System.out.println("Já foste!");
 
         }
 
-        Statement stmt = null;
-        try {
-            Connection conn = dc.ConnectDb();
-
-            conn.setAutoCommit(false);
-
-            System.out.println("STATUS ---> Conectado com sucesso!");
-            stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
-                    + " AND password LIKE " + "'" + password_box.getText() + "'" );
-
-            while ( rs.next() ) {
-                if (!(rs.getString("username").isEmpty()) || !(rs.getString("password").isEmpty())) {
-                    String  username = rs.getString("username");
-                    System.out.println( "Username = " + username );
-                    String password = rs.getString("password");
-                    System.out.println("Password = " + password);
-                    let_in = true;
-                }
-            }
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            UtilsForm.alertMsg(Alert.AlertType.ERROR,e.toString());
-
-            // System.exit(0);
-        }
-        System.out.println("STATUS ---> operação realizada com sucesso!");
-        return let_in;
 
     }
 
@@ -147,9 +141,9 @@ public class FXMLDocumentController implements Initializable {
 
             System.out.println("STATUS ---> Conectado com sucesso!");
             stmt = conn.createStatement();
-
             ResultSet rs = stmt.executeQuery( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
-            + " AND password LIKE " + "'" + password_box.getText() + "'" );
+                    + " AND password LIKE " + "'" + password_box.getText() + "' AND estado = 0" );
+
 
             while ( rs.next() ) {
                  if (!(rs.getString("username").isEmpty()) || !(rs.getString("password").isEmpty())) {
@@ -174,12 +168,39 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
+    protected void controlChek(){
+        Properties prop = new Properties();
 
+
+        System.out.println(checkbox.isSelected());
+            try (InputStream input = new FileInputStream("config.properties")) {
+                // load a properties file
+                prop.load(input);
+                username_box.setText(prop.getProperty("username"));
+                password_box.setText(prop.getProperty("password"));
+                // get the property value and print it out
+                System.out.println("Username - " + prop.getProperty("username"));
+                System.out.println("Password - " + prop.getProperty("password"));
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+
+    }
 
 
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // username_box.clear();
+        if(isTickEnabled()){
+            controlChek();
+            System.out.println(isTickEnabled());
+        }
+        System.out.println(isTickEnabled());
+
+
 
     }
     
