@@ -8,7 +8,7 @@ Em termos de funcionalidades, a aplicação deverá permitir:
 
 2. Número excessivo de tentativas falhadas deverá levar a um bloqueio da conta do utilizador  ✗
 
-3. Possibilidade de memorização dos dados de entrada  ?
+3. Possibilidade de memorização dos dados de entrada //
 
 4. Logout através do ícone indicado para o utilizador  ✗
 
@@ -18,11 +18,11 @@ Em termos de funcionalidades, a aplicação deverá permitir:
 
 7. Criação de nova acção  ✗
 
-8. Remoção de acção
+8. Remoção de acção  //ToDo
 
-9. Registo da assiduidade de um formador da acção seleccionada conforme indicado na maquete  ✗ ?
+9. Registo da assiduidade de um formador da acção seleccionada conforme indicado na maquete  ✗ //Bug
 
-10. Registo da assiduidade de todos os formadores conforme indicado na maquete  ✗ ?
+10. Registo da assiduidade de todos os formadores conforme indicado na maquete  ✗ //Bug
 
 11. Utilização de Java Swing ou Java Fx, ou, em alternativa, C++ com Qt.  ✗ JavaFX
 
