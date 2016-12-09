@@ -26,6 +26,11 @@ import java.util.ResourceBundle;
 /*
  * Created by pc on 11/10/16.
  */
+import java.util.Properties;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class FXMLDocumentController implements Initializable {
 
@@ -41,7 +46,10 @@ public class FXMLDocumentController implements Initializable {
 
     private MysqlConnect dc;
     int control =1;
-    private boolean tickEnabled;
+    public boolean tickEnabled;
+    String result = "";
+    InputStream inputStream;
+
 
     public boolean isTickEnabled() {
         return tickEnabled;
@@ -69,14 +77,27 @@ public class FXMLDocumentController implements Initializable {
 
 
         if (isValidCredentials()) {
+            OutputStream output = new FileOutputStream("config.properties");
+
             if(checkbox.isSelected()){
                 System.out.println(" CheckBoX ON");
                 tickEnabled = true;
-                OutputStream output = new FileOutputStream("config.properties");
+                System.out.println(isTickEnabled());
                 // write login-username to config file
+                prop.setProperty("chkbx", "ON");
+
                 prop.setProperty("username", username_box.getText());
                 prop.setProperty("password", password_box.getText());
                 prop.store(output, null);
+            }
+           if(!(checkbox.isSelected())){
+
+                System.out.println(" CheckBoX OFF");
+                prop.setProperty("username", " ");
+                prop.setProperty("password", " ");
+                prop.setProperty("chkbx", "OFF");
+                prop.store(output, null);
+
             }
 
             control = 1;
@@ -170,22 +191,18 @@ public class FXMLDocumentController implements Initializable {
 
     protected void controlChek(){
         Properties prop = new Properties();
-
-
-        System.out.println(checkbox.isSelected());
-            try (InputStream input = new FileInputStream("config.properties")) {
-                // load a properties file
-                prop.load(input);
-                username_box.setText(prop.getProperty("username"));
-                password_box.setText(prop.getProperty("password"));
-                // get the property value and print it out
-                System.out.println("Username - " + prop.getProperty("username"));
-                System.out.println("Password - " + prop.getProperty("password"));
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
+        try (InputStream input = new FileInputStream("config.properties")) {
+            // load a properties file
+            prop.load(input);
+            username_box.setText(prop.getProperty("username"));
+            password_box.setText(prop.getProperty("password"));
+            // get the property value and print it out
+            System.out.println("Username - " + prop.getProperty("username"));
+            System.out.println("Password - " + prop.getProperty("password"));
+            input.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
@@ -194,14 +211,37 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // username_box.clear();
-        if(isTickEnabled()){
-            controlChek();
-            System.out.println(isTickEnabled());
+        checkbox.setSelected(false);
+
+        Properties prop = new Properties();
+        InputStream in = null;
+
+        try {
+
+            in = new FileInputStream("config.properties");
+            prop.load(in);
+            String foo = prop.getProperty("chkbx");
+            System.out.println(foo);
+            if(prop.getProperty("chkbx").contains("ON")){
+                System.out.println("FOO -> "+foo);
+                checkbox.setSelected(true);
+                controlChek();
+                    //input.close();
+
+            }
+            else{
+                checkbox.setSelected(false);
+
+            }
+
+
+
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        System.out.println(isTickEnabled());
 
 
 
-    }
     
 }

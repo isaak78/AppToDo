@@ -3,8 +3,13 @@ package sample;
 import javafx.scene.control.Alert;
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.Properties;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Created by pc on 11/18/16.
@@ -36,6 +41,8 @@ import java.util.ArrayList;
 
 
 public class UtilsForm {
+
+
 
     public static void alertMsg(Alert.AlertType error, String msg) {
 
