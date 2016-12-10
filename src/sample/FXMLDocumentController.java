@@ -26,8 +26,7 @@ import java.util.ResourceBundle;
 /*
  * Created by pc on 11/10/16.
  */
-import java.util.Properties;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -41,19 +40,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML private TextField username_box;
     @FXML private TextField password_box;
     @FXML private Label invalid_label;
-    @FXML private Label isConnected;
     @FXML private CheckBox checkbox;
 
     private MysqlConnect dc;
     int control =1;
-    public boolean tickEnabled;
-    String result = "";
-    InputStream inputStream;
 
-
-    public boolean isTickEnabled() {
-        return tickEnabled;
-    }
 
 
 
@@ -81,11 +72,7 @@ public class FXMLDocumentController implements Initializable {
 
             if(checkbox.isSelected()){
                 System.out.println(" CheckBoX ON");
-                tickEnabled = true;
-                System.out.println(isTickEnabled());
-                // write login-username to config file
-                prop.setProperty("chkbx", "ON");
-
+                prop.setProperty("chkbx", "_ON");
                 prop.setProperty("username", username_box.getText());
                 prop.setProperty("password", password_box.getText());
                 prop.store(output, null);
@@ -95,7 +82,7 @@ public class FXMLDocumentController implements Initializable {
                 System.out.println(" CheckBoX OFF");
                 prop.setProperty("username", " ");
                 prop.setProperty("password", " ");
-                prop.setProperty("chkbx", "OFF");
+                prop.setProperty("chkbx", "_OFF");
                 prop.store(output, null);
 
             }
@@ -124,8 +111,6 @@ public class FXMLDocumentController implements Initializable {
             password_box.clear();
             //System.exit(0);
         }else {
-         //username_box.clear();
-            //password_box.clear();
         invalid_label.setVisible(true);
         username_box.clear();
         password_box.clear();
@@ -151,28 +136,28 @@ public class FXMLDocumentController implements Initializable {
     private boolean isValidCredentials() {
 
         boolean let_in = false;
-        System.out.println( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
-            + " AND password LIKE " + "'" + password_box.getText() + "'" );
+        System.out.println( "SELECT password FROM pessoa WHERE username LIKE '" + username_box.getText()+  "' AND estado = 0" );
     
         Statement stmt = null;
         try {
             Connection conn = dc.ConnectDb();
 
             conn.setAutoCommit(false);
+            String passc = password_box.getText();
 
             System.out.println("STATUS ---> Conectado com sucesso!");
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT * FROM pessoa WHERE username LIKE " + "'" + username_box.getText() + "'"
-                    + " AND password LIKE " + "'" + password_box.getText() + "' AND estado = 0" );
+            ResultSet rs = stmt.executeQuery( "SELECT password FROM pessoa WHERE username LIKE '" + username_box.getText()+  "' AND estado = 0" );
 
 
             while ( rs.next() ) {
-                 if (!(rs.getString("username").isEmpty()) || !(rs.getString("password").isEmpty())) {
-                     String  username = rs.getString("username");
-                     System.out.println( "Username = " + username );
+                 if (!(rs.getString("password").isEmpty())) {
+                     //String  username = rs.getString("username");
+                     //System.out.println( "Username = " + username );
                      String password = rs.getString("password");
                      System.out.println("Password = " + password);
-                     let_in = true;
+                     if(SecurityKey.autox(passc,password))
+                        let_in = true;
                  }
             }
             rs.close();
@@ -229,13 +214,9 @@ public class FXMLDocumentController implements Initializable {
                     //input.close();
 
             }
-            else{
+            else if(prop.getProperty("chkbx").contains("OFF")) {
                 checkbox.setSelected(false);
-
             }
-
-
-
                 } catch (IOException e) {
                 e.printStackTrace();
             }

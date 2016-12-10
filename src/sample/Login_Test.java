@@ -22,11 +22,9 @@ public class Login_Test extends Application {
         System.out.println("apache.commons.EmailValidator: i@g.c                -> " + UtilsForm.isEmaiValid("i@g.c"));
         System.out.println(UtilsForm.isValidNif(123456780));
         System.out.println(UtilsForm.isValidNif(1));
-        SecurityKey.securiryTest("sherLOCKEDhomes");
-        System.out.println("PassWord TXT = sherLOCKEDhomes");
-        System.out.println("Pop-uP valid password test");
-
-        UtilsForm.validaPassword("sherrd");
+        //System.out.println("Pop-uP valid password test");
+       // System.out.println(SecurityKey.autox("JavaFX","JavaFX"));
+        //UtilsForm.validaPassword("sherrd");
 
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml")); //FXMLDocument pag de login
         Scene scene_login = new Scene(root);

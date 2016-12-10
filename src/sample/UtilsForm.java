@@ -170,19 +170,18 @@ public class UtilsForm {
     }
 
 
-    public static ArrayList<String> validaPassword(String password) {
-        ArrayList<String> validationErrors = new ArrayList<>();
+    public static boolean validaPassword(String password) {
         if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}$")){
             alertMsg(Alert.AlertType.INFORMATION,("A password deve conter pelo menos 6 caracteres\n" +
                     "uma letra maiúscula, uma letra minúscula\n" +
                     "um dígito e um caracter especial"));
-            validationErrors.add("Erro na Password!");
+            return false;
 
         }
-        return validationErrors;
+        return true;
     }
 
-    public ArrayList<String> validateUsername(String username)  {
+    public static boolean validateUsername(String username)  {
         ArrayList<String> validationErrors = new ArrayList<>();
 
         if( !username.matches("[a-zA-Z0-9.\\-_]{3,}")) {
@@ -191,7 +190,7 @@ public class UtilsForm {
 
         }
 
-        return validationErrors;
+        return true;
 
     }
 

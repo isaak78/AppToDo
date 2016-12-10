@@ -36,12 +36,6 @@ public class FXMLHomePageController implements Initializable {
     @FXML private TextField user;
     @FXML private TextField passcheck;
     @FXML private TextField pass;
-    @FXML private ProgressBar progressBar;
-    @FXML private Pane progressBarWrapper;
-    @FXML private Label loopCounter;
-    @FXML private MenuButton hour_menubutton;
-    @FXML private Button done_button;
-
     @FXML private DatePicker date_start;
     @FXML private DatePicker date_stop;
     @FXML private Label invalid_label;
@@ -62,7 +56,7 @@ public class FXMLHomePageController implements Initializable {
     @FXML ComboBox<String> accaoBox;
 
     private MysqlConnect dc;
-
+    private String encode;
     @FXML
     private void handleBtn1Action(ActionEvent event) throws IOException {
 
@@ -168,9 +162,7 @@ public class FXMLHomePageController implements Initializable {
             result.add(row);
         }
         UtilsForm.alertMsg(Alert.AlertType.WARNING,("IiiiuUUPPYy!"));
-        System.out.println(        isUsernameTaken("x"));
-        System.out.println(        isUsernameTaken("papagaio"));
-        UtilsForm.validaPassword(pass.getText());
+
       //  insertStatement(query);
         System.out.println(" ArrayList dos Cursos");
         for (String[] res : result)
@@ -251,7 +243,6 @@ public class FXMLHomePageController implements Initializable {
         curso.clear();
         curso_desc.clear();
         System.out.println("yaYAHha Clear OK!");
-       // curso.setText("Label");
 
     }
 
@@ -259,18 +250,20 @@ public class FXMLHomePageController implements Initializable {
 
 
     @FXML
-    private void doneButtonAction(ActionEvent event) throws IOException {
-
+    private void doneButtonAction(ActionEvent event) throws IOException, SQLException {
+        String teste = "";
         /**
          *      testar o inserir turmas + sql
          */
         System.out.println("----------------[  ADD Formador  ]----------------");
-
+        ArrayList<String> validaErrors = new ArrayList<>();
         String cartaoc = cc.getText();
         if(!UtilsForm.luhnCheck(cartaoc)){
             cc.clear();
             invalid_cc.setText("CC inválido");
-        }else{
+        }
+
+        else if (isRegFormadOk()){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("Confirma que os dados estão corretos?");
@@ -278,6 +271,11 @@ public class FXMLHomePageController implements Initializable {
             String query = "INSERT INTO formador (nome,email,cc) VALUES (" + "'" + nome_formador.getText() +
                     "'," + "'" + apelido_formador.getText() + "'," + "'" + cc.getText() + "');";
             Optional<ButtonType> result = alert.showAndWait();
+
+
+            UtilsForm.validaPassword(pass.getText());
+
+
             if (result.get() == ButtonType.OK){
                 System.out.println("QUERY : " + query);
                 insertStatement(query);
@@ -288,15 +286,40 @@ public class FXMLHomePageController implements Initializable {
         }
     }
 
-    public static boolean isUsernameTaken(String username) throws SQLException {
-        // Connection connection = this.databaseAdapter.getConnection();
+
+
+    @FXML
+    private void userDoneAction(ActionEvent event) throws IOException, SQLException {
+        isRegFormadOk();
+    }
+
+
+
+    private boolean isRegFormadOk() throws SQLException {
+        if( isUsernameTaken(user.getText())||(UtilsForm.validateUsername(user.getText()))){
+            user.clear();
+            invalid_cc.setText("Escolha outro UserName");
+            return false;
+        }
+
+        if((pass.getText() == passcheck.getText())&&(UtilsForm.validaPassword(pass.getText()))){
+
+            encode = SecurityKey.enCodePass(pass.getText());
+            System.out.println(encode);
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+
+    protected static boolean isUsernameTaken(String username) throws SQLException {
         MysqlConnect dc = null;
         Connection conn = dc.ConnectDb() ;
-
-
         PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM pessoa WHERE username =" +
                 " '"+username+"';");
-       // statement.setString(1, username);
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
         int count = resultSet.getInt(1);
@@ -405,25 +428,6 @@ public class FXMLHomePageController implements Initializable {
 
 
 
-    @FXML
-    private void doLoop() {
-       // progressBarWrapper.setVisible(true);
-
-        for (int i = 1; i <= 5; i++) {
-            progressBar.setProgress(i * 0.5);
-            loopCounter.setText(String.format("%s loop(s)", i));
-            try {
-                Thread.sleep(1000); // 1000 milliseconds is one second.
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-    //    progressBarWrapper.setVisible(false);
-
-    }
-
-
 
 
     @Override
@@ -435,9 +439,7 @@ public class FXMLHomePageController implements Initializable {
 
 
         /**
-         * TODO  :)
-         * dados na tabela aulas e faltas
-         * Query das faltas dos formadores
+         * TODO  :) Fix ADD Formador user/password
          */
 
 }
