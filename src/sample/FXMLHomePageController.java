@@ -42,6 +42,7 @@ public class FXMLHomePageController implements Initializable {
     @FXML private Label invalid_cc;
     @FXML private TextField nome_formador;
     @FXML private TextField apelido_formador;
+    @FXML private TextField nif;
     @FXML private TextField cc;
     @FXML private TextField accao;
     @FXML private TextField accao_desc;
@@ -263,22 +264,35 @@ public class FXMLHomePageController implements Initializable {
             invalid_cc.setText("CC inválido");
         }
 
-        else if (isRegFormadOk()){
+        if (!nif.getText().matches("[0-9]{9}")) {
+            nif.clear();
+            invalid_cc.setText("NiF inválido");
+        }
+
+
+        if ((isRegFormadOk()) && (nif.getText().matches("[0-9]{9}")) && (UtilsForm.luhnCheck(cartaoc))){
+            UtilsForm.isValidNif(Integer.parseInt(nif.getText()));
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("Confirma que os dados estão corretos?");
             alert.setContentText(" Criar Novo Registo de Formador");
-            String query = "INSERT INTO formador (nome,email,cc) VALUES (" + "'" + nome_formador.getText() +
+            String query2 = "INSERT INTO formador (nome,email,fk_cc) VALUES (" + "'" + nome_formador.getText() +
                     "'," + "'" + apelido_formador.getText() + "'," + "'" + cc.getText() + "');";
             Optional<ButtonType> result = alert.showAndWait();
+            String query1 = "INSERT INTO pessoa (username,password,nome,cc,tipo) VALUES (" + "'" + user.getText() +
+                    "'," + "'" + encode + "'," + "'" + nome_formador.getText() + "','" + cc.getText() + "' ,'Formador');";
 
-
-            UtilsForm.validaPassword(pass.getText());
 
 
             if (result.get() == ButtonType.OK){
-                System.out.println("QUERY : " + query);
-                insertStatement(query);
+                System.out.println("QUERY : " + query1);
+                insertStatement(query1);
+                insertStatement("unlock tables");
+
+                System.out.println("QUERY : " + query2);
+                insertStatement(query1);
+
                 System.out.println("----------------[  OK  ]----------------");
             }
 
@@ -291,25 +305,28 @@ public class FXMLHomePageController implements Initializable {
     @FXML
     private void userDoneAction(ActionEvent event) throws IOException, SQLException {
         isRegFormadOk();
+        invalid_cc.setText("");
     }
 
 
 
     private boolean isRegFormadOk() throws SQLException {
-        if( isUsernameTaken(user.getText())||(UtilsForm.validateUsername(user.getText()))){
+        System.out.println(pass.getText());
+        System.out.println(passcheck.getText());
+        if(isUsernameTaken(user.getText()) || !UtilsForm.validateUsername(user.getText()) ){
             user.clear();
             invalid_cc.setText("Escolha outro UserName");
             return false;
         }
 
-        if((pass.getText() == passcheck.getText())&&(UtilsForm.validaPassword(pass.getText()))){
-
+        if((pass.getText()).equals(passcheck.getText()) && UtilsForm.validaPassword(pass.getText())){
+            System.out.println(passcheck.getText());
             encode = SecurityKey.enCodePass(pass.getText());
-            System.out.println(encode);
+            System.out.println("Pass hash: "+encode);
             return true;
         }
-
-
+        pass.clear();
+        passcheck.clear();
         return false;
     }
 
@@ -363,7 +380,7 @@ public class FXMLHomePageController implements Initializable {
             conn.commit();
             conn.close();
 
-            UtilsForm.alertMsg(Alert.AlertType.INFORMATION,(" Dados Validados!"));
+            //UtilsForm.alertMsg(Alert.AlertType.INFORMATION,(" Dados Validados!"));
 
         }catch ( Exception e ) {
 
@@ -404,7 +421,7 @@ public class FXMLHomePageController implements Initializable {
         }
     }
 
-    boolean compareTo0(java.util.Date DateIn , java.util.Date DateOut) {
+    protected static boolean compareTo0(java.util.Date DateIn, java.util.Date DateOut) {
         if (DateIn.before(DateOut) && !(DateIn.equals(DateOut))) {return true;}
         else return false;
     }

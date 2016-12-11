@@ -9,9 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 
 
-public class SecurityKey {
+class SecurityKey {
 
-    public static boolean autox (String pass1, String pass2){
+    static boolean autox(String pass1, String pass2){
         System.out.println("Pass TXT: "+pass1);
         System.out.println("Crypt Pass: "+pass2);
         if(BCrypt.checkpw(pass1,pass2)){
@@ -22,10 +22,9 @@ public class SecurityKey {
     }
 
 
-    public static String enCodePass(String passtxt){
+    static String enCodePass(String passtxt){
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(passtxt);
-        return hashedPassword;
+        return passwordEncoder.encode(passtxt);
 
     }
 

@@ -45,8 +45,8 @@ public class FXMLUserController implements Initializable {
     private Button btnLoad;
         // observable list para receber os dados da BD
     private ObservableList<UserDetails> data;
-    ObservableList<String>  listaAccoes = FXCollections.observableArrayList(); //Lista de Accoes
-    ObservableList<String>  listaFormador = FXCollections.observableArrayList(); //Lista de Formadores
+    private ObservableList<String>  listaAccoes = FXCollections.observableArrayList(); //Lista de Accoes
+    private ObservableList<String>  listaFormador = FXCollections.observableArrayList(); //Lista de Formadores
 
     private MysqlConnect dc;
 
@@ -58,7 +58,7 @@ public class FXMLUserController implements Initializable {
     @FXML
     private void connectToDatabase (ActionEvent actionEvent) {
         try {
-            Connection conn = dc.ConnectDb();
+            Connection conn = MysqlConnect.ConnectDb();
             data = FXCollections.observableArrayList();
                 // Executa a query e guarda o resultado em resultset
             ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM formador");
@@ -87,7 +87,7 @@ public class FXMLUserController implements Initializable {
     }
 
     private void buildAccaoData(){
-        Connection conn = dc.ConnectDb();
+        Connection conn = MysqlConnect.ConnectDb();
         System.out.println("----------------[  OK Acções ]----------------");
         try{
             String SQL = "SELECT * FROM accao;";
@@ -111,7 +111,7 @@ public class FXMLUserController implements Initializable {
             UtilsForm.alertMsg(Alert.AlertType.INFORMATION,("Escolha: Formador / Acção!"));
 
         } else {
-            Connection conn = dc.ConnectDb();
+            Connection conn = MysqlConnect.ConnectDb();
             System.out.println("----------------[  OK Acções/Formador ]----------------");
 
             String accaoBox = accaoCombo.getSelectionModel().getSelectedItem().toString();
@@ -123,7 +123,7 @@ public class FXMLUserController implements Initializable {
             conn = null;
             Statement stmt = null;
             try {
-                conn = dc.ConnectDb();
+                conn = MysqlConnect.ConnectDb();
                 conn.setAutoCommit(false);
                 System.out.println("STATUS ---> Conectado com sucesso!");
                 stmt = conn.createStatement();

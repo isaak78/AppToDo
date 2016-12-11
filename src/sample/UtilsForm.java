@@ -3,13 +3,7 @@ package sample;
 import javafx.scene.control.Alert;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
+
 
 /**
  * Created by pc on 11/18/16.
@@ -75,10 +69,7 @@ public class UtilsForm {
     public static boolean isEmaiValid(String email){
 
         EmailValidator validator = EmailValidator.getInstance();
-        if (validator.isValid(email))
-            return  true;
-        else
-            return false;
+        return validator.isValid(email);
     }
 
 
@@ -87,10 +78,7 @@ public class UtilsForm {
 
     public static boolean isCcValid(String ccNumber){
 
-        if (ccNumber.matches("[0-9]{9}[x-zX-Z]{2}[0-9]"))
-            return true;
-        else
-            return false;
+        return ccNumber.matches("[0-9]{9}[x-zX-Z]{2}[0-9]");
     }
 
 
@@ -171,8 +159,8 @@ public class UtilsForm {
 
 
     public static boolean validaPassword(String password) {
-        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}$")){
-            alertMsg(Alert.AlertType.INFORMATION,("A password deve conter pelo menos 6 caracteres\n" +
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$")){
+            alertMsg(Alert.AlertType.INFORMATION,("A password deve conter pelo menos 5 caracteres\n" +
                     "uma letra maiúscula, uma letra minúscula\n" +
                     "um dígito e um caracter especial"));
             return false;
@@ -182,12 +170,10 @@ public class UtilsForm {
     }
 
     public static boolean validateUsername(String username)  {
-        ArrayList<String> validationErrors = new ArrayList<>();
 
         if( !username.matches("[a-zA-Z0-9.\\-_]{3,}")) {
-            validationErrors.add("Erro no Username");
             alertMsg(Alert.AlertType.INFORMATION,("O username deve conter pelo menos 3 caracteres!"));
-
+            return false;
         }
 
         return true;

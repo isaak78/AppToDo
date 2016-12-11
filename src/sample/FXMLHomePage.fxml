@@ -141,7 +141,7 @@
                            </effect>
                         </TabPane>
                         <Label fx:id="invalid_cc" layoutX="74.0" layoutY="363.0" prefHeight="26.0" prefWidth="287.0" textFill="#f52530" />
-                        <Label layoutX="323.0" layoutY="368.0" text="Alpha 0.6.1" textFill="#1f0b6b">
+                        <Label layoutX="323.0" layoutY="368.0" text="Alpha 0.6.3" textFill="#1f0b6b">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font></Label>

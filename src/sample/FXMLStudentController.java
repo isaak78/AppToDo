@@ -53,7 +53,7 @@ public class FXMLStudentController implements Initializable {
 
 
     @FXML
-    private void connectToDatabase (ActionEvent actionEvent) {
+    private void connectToDatabase() {
         try {
             Connection conn = dc.ConnectDb();
             data = FXCollections.observableArrayList();
@@ -89,15 +89,16 @@ public class FXMLStudentController implements Initializable {
 
     private void buildAccaoData(){
         Connection conn = dc.ConnectDb();
+        listaAccoes.clear();
         System.out.println("----------------[  OK Acções ]----------------");
         try{
             String SQL = "SELECT * FROM accao;";
             ResultSet rs = conn.createStatement().executeQuery(SQL);
             while(rs.next()){
-                listaAccoes.add(rs.getString("cod_accao")); //add String curso na list
-            }//todo fix bug
+                listaAccoes.add(rs.getString("cod_accao"));
+            }//todo :)
 
-        accaoCombo.setItems(listaAccoes); //Carrega a lista de acçoes/turmas na combobox
+        accaoCombo.setItems(listaAccoes);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class FXMLStudentController implements Initializable {
             UtilsForm.alertMsg(Alert.AlertType.INFORMATION,("Escolha: Formando / Acção!"));
 
         } else {
-            Connection conn = dc.ConnectDb();
+            Connection conn = MysqlConnect.ConnectDb();
             System.out.println("----------------[  OK Acções/Formador ]----------------");
 
             String accaoBox = accaoCombo.getSelectionModel().getSelectedItem().toString();
@@ -125,7 +126,7 @@ public class FXMLStudentController implements Initializable {
             conn = null;
             Statement stmt = null;
             try {
-                conn = dc.ConnectDb();
+                conn = MysqlConnect.ConnectDb();
                 conn.setAutoCommit(false);
                 System.out.println("STATUS ---> Conectado com sucesso!");
                 stmt = conn.createStatement();
@@ -150,6 +151,8 @@ public class FXMLStudentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO fix bugs
+        buildAccaoData();
+        connectToDatabase();
     }
 }
 

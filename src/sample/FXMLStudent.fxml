@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -16,16 +17,15 @@
         <columns>
             <TableColumn fx:id="columnId" minWidth="0.0" prefWidth="35.0" text="ID" />
           <TableColumn fx:id="columnName" prefWidth="120.0" text="Nome" />
-          <TableColumn fx:id="columnApelido" minWidth="0.0" prefWidth="168.0" text="Email" />
-            <TableColumn fx:id="columnCc" prefWidth="186.0" text="Cartao Cidadao" />
+          <TableColumn fx:id="columnApelido" minWidth="0.0" prefWidth="133.0" text="Email" />
+            <TableColumn fx:id="columnCc" prefWidth="221.0" text="Cartão Cidadão" />
         </columns>
       </TableView>
-      <Label layoutX="211.0" layoutY="27.0" prefHeight="27.0" prefWidth="122.0" text="Formandos">
+      <Label layoutX="211.0" layoutY="27.0" prefHeight="27.0" prefWidth="122.0" text="Formandos" textAlignment="CENTER" underline="true">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Button fx:id="btnLoad" layoutX="391.0" layoutY="349.0" mnemonicParsing="false" onAction="#connectToDatabase" text="ATUALIZAR" />
       <ComboBox fx:id="accaoCombo" layoutX="344.0" layoutY="401.0" prefHeight="26.0" prefWidth="92.0" promptText="Acçao" />
       <ComboBox fx:id="formandoCombo" layoutX="241.0" layoutY="401.0" prefHeight="26.0" prefWidth="63.0" promptText="nº" />
       <Button layoutX="446.0" layoutY="401.0" mnemonicParsing="false" onAction="#handleButtonAction" text="OK" />
@@ -34,6 +34,9 @@
             <Insets right="5.0" />
          </padding>
       </Label>
-      <Label layoutX="59.0" layoutY="406.0" text="ADICIONAR FORMADOR ID:" />
+      <Label layoutX="59.0" layoutY="406.0" text="ADICIONAR FORMANDO ID:" />
     </children>
+   <effect>
+      <InnerShadow />
+   </effect>
 </AnchorPane>

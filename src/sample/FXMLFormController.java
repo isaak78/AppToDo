@@ -71,7 +71,14 @@ public class FXMLFormController implements Initializable {
     @FXML
     private void connectToDataFaltas (ActionEvent actionEvent) {
         dc = new MysqlConnect();
+        LocalDate ldi = date_start.getValue();
+        Instant ins = ldi.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        java.util.Date dateIn = Date.from(Instant.from(ins));
+
         LocalDate ldf = date_stop.getValue();
+        ins = ldf.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        java.util.Date dateOut = Date.from(Instant.from(ins));
+
         LocalDate ldefault = LocalDate.parse("2000-01-01");
         LocalDate today = LocalDate.now();
         String sQlQuery = "";
@@ -96,16 +103,16 @@ public class FXMLFormController implements Initializable {
                             "accaoaluno.fk_accao = '"+accaoBox.getValue()+"'; ";
 
                 }
-                if(date_start.getValue() == null){
+                if(date_start.getValue() == null || (!FXMLHomePageController.compareTo0(dateIn,dateOut)) ){
 
                     Instant fimc = ldefault.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-                    java.util.Date dateIn = Date.from(Instant.from(fimc));
+                    dateIn = Date.from(Instant.from(fimc));
                     java.sql.Date sqlDateIn = new java.sql.Date(dateIn.getTime());
                     date_start.setValue(sqlDateIn.toLocalDate());
                     System.out.println("Data Start = "+ldefault);
 
-                }//todo fix bug date setValue
-                if(date_stop.getValue() != null){
+                }//todo testar melhor
+                if(date_stop.getValue() == null){
                     date_stop.setValue(today);
                     System.out.println("Data Start = "+ldefault);
                     System.out.println("Data Stop = "+today);
