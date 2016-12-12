@@ -56,6 +56,21 @@ public class FXMLHomePageController implements Initializable {
     @FXML ComboBox<String> combooBox; // Horario enum 8-14 14-20
     @FXML ComboBox<String> accaoBox;
 
+
+    @FXML
+    private TextField nome_formando;
+
+    @FXML
+    private TextField email_formando;
+
+    @FXML
+    private TextField cc1;
+
+    @FXML
+    private TextField nif1;
+
+
+
     private MysqlConnect dc;
     private String encode;
     @FXML
@@ -91,6 +106,23 @@ public class FXMLHomePageController implements Initializable {
         stage.initOwner(btnF.getScene().getWindow());
         stage.showAndWait();
         System.out.println("yiuuuuuupY");
+    }
+
+
+    @FXML
+    private void handleBtnFRAction(ActionEvent event) throws IOException {
+
+        System.out.println("----------------[ Faltas Formadores ]----------------\n");
+        Stage stage;
+        Parent root;
+        stage = new Stage();
+        root = FXMLLoader.load(getClass().getResource("FXMLFrmd.fxml"));
+        stage.setScene(new Scene(root));
+        stage.setTitle("TODOIS -> QUERY por NOME / ACÇÃO / DATE WHERE (date BETWEEN x AND x)");
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(btnF.getScene().getWindow());
+        stage.showAndWait();
+        System.out.println("FiNiSH HiM");
     }
 
 
@@ -291,7 +323,7 @@ public class FXMLHomePageController implements Initializable {
                 insertStatement("unlock tables");
 
                 System.out.println("QUERY : " + query2);
-                insertStatement(query1);
+                insertStatement(query2);
 
                 System.out.println("----------------[  OK  ]----------------");
             }
@@ -300,6 +332,55 @@ public class FXMLHomePageController implements Initializable {
         }
     }
 
+    @FXML
+    private void doneButton2Action(ActionEvent event) throws IOException, SQLException {
+        /**
+         *      testar o inserir turmas + sql
+         */
+        System.out.println("----------------[  ADD Formando  ]----------------");
+        String cartaoc = cc1.getText();
+        if(!UtilsForm.luhnCheck(cartaoc)){
+            cc1.clear();
+            invalid_cc.setText("CC inválido");
+        }
+
+        if (!nif1.getText().matches("[0-9]{9}")) {
+            nif1.clear();
+            invalid_cc.setText("NiF inválido");
+        }
+
+
+        if (nif1.getText().matches("[0-9]{9}") && UtilsForm.luhnCheck(cartaoc)){
+            int niftest = Integer.parseInt(nif1.getText());
+
+            UtilsForm.isValidNif(niftest);
+            invalid_cc.setDisable(true);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("Confirma que os dados estão corretos?");
+            alert.setContentText(" Criar Novo Registo de Formador");
+            String query2 = "INSERT INTO formando (nome,email,fk_cc) VALUES (" + "'" + nome_formando.getText() +
+                    "'," + "'" + email_formando.getText() + "'," + "'" + cc1.getText() + "');";
+            Optional<ButtonType> result = alert.showAndWait();
+            String query1 = "INSERT INTO pessoa (nome,cc,tipo) VALUES ('" + nome_formando.getText()
+                    + "','" + cc1.getText() + "' ,'formando');";
+
+
+
+            if (result.get() == ButtonType.OK){
+                System.out.println("QUERY : " + query1);
+                insertStatement(query1);
+                insertStatement("unlock tables");
+
+                System.out.println("QUERY : " + query2);
+                insertStatement(query2);
+
+                System.out.println("----------------[  OK  ]----------------");
+            }
+
+
+        }
+    }
 
 
     @FXML

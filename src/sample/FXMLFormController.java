@@ -175,6 +175,7 @@ public class FXMLFormController implements Initializable {
     private void buildAcDataFaltas(){
         Connection conn = dc.ConnectDb();
         System.out.println("----------------[  OK Lista Acções ]----------------");
+
         try{
             String SQL = "SELECT * FROM accao;";
             ResultSet rs = conn.createStatement().executeQuery(SQL);
@@ -192,6 +193,7 @@ public class FXMLFormController implements Initializable {
     private void buildListaFormandos(String accao){
         Connection conn = dc.ConnectDb();
         System.out.println("----------------[  OK Lista Formandos ]----------------");
+        //searchBox.getSelectionModel().clearSelection();
         try{
             String SQL = "SELECT nome FROM formando, accaoaluno WHERE id_formando=fk_formando and fk_accao like '"+accao+"';";
             ResultSet rs = conn.createStatement().executeQuery(SQL);
