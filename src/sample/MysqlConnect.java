@@ -11,7 +11,6 @@ import java.util.Properties;
 /**
  * Created by pc on 11/19/16.
  *
- * https://lowendbox.com/blog/getting-started-with-mysql-over-ssl/
  */
 
 public class MysqlConnect {

@@ -71,21 +71,21 @@ public class FXMLFormController implements Initializable {
     @FXML
     private void connectToDataFaltas (ActionEvent actionEvent) {
         dc = new MysqlConnect();
-        LocalDate ldi = date_start.getValue();
-        Instant ins = ldi.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        java.util.Date dateIn = Date.from(Instant.from(ins));
+        LocalDate ldefault = LocalDate.parse("2014-01-01");
 
-        LocalDate ldf = date_stop.getValue();
-        ins = ldf.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        java.util.Date dateOut = Date.from(Instant.from(ins));
+        if(date_start.getValue() == null){
+            System.out.println("Data Start = "+ldefault);
+            date_start.setValue(ldefault);
+        }
+        if(date_stop.getValue() == null){
+            LocalDate today = LocalDate.now();
 
-        LocalDate ldefault = LocalDate.parse("2000-01-01");
-        LocalDate today = LocalDate.now();
+            System.out.println("Data Start = "+today);
+            date_stop.setValue(today);
+        }
+
         String sQlQuery = "";
 
-        System.out.println("Data Start = "+ldefault);
-        System.out.println("Data Stop = "+ldf);
-        System.out.println("Data Hoje = "+today);
 
         if (accaoBox.getValue() == null &&((searchBox.getValue() == null)||!(chkTodos.isSelected()))){
             UtilsForm.alertMsg(Alert.AlertType.INFORMATION,("Escolha: Acção / Formando!"));
@@ -103,28 +103,6 @@ public class FXMLFormController implements Initializable {
                             "accaoaluno.fk_accao = '"+accaoBox.getValue()+"'; ";
 
                 }
-                if(date_start.getValue() == null || (!FXMLHomePageController.compareTo0(dateIn,dateOut)) ){
-
-                    Instant fimc = ldefault.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-                    dateIn = Date.from(Instant.from(fimc));
-                    java.sql.Date sqlDateIn = new java.sql.Date(dateIn.getTime());
-                    date_start.setValue(sqlDateIn.toLocalDate());
-                    System.out.println("Data Start = "+ldefault);
-
-                }//todo testar melhor
-                if(date_stop.getValue() == null){
-                    date_stop.setValue(today);
-                    System.out.println("Data Start = "+ldefault);
-                    System.out.println("Data Stop = "+today);
-                    ldf = today;
-                    sQlQuery = "select id_formando, formando.nome ,aula.fk_ufcd ,aula.data_h, falta ,justif from aula," +
-                            " formando ,faltaformando, accaoaluno where accaoaluno.fk_formando= formando.id_formando " +
-                            "and  formando.id_formando=faltaformando.fk_formando and aula.id_aula = fk_aula and " +
-                            "accaoaluno.fk_accao = '"+accaoBox.getValue()+"' and (data_h BETWEEN '"+ldefault+"' AND '"
-                            +ldf+"')";
-
-                }
-
 
                 if (searchBox.getValue() != null){
                     String searchNome = searchBox.getValue();
@@ -168,7 +146,8 @@ public class FXMLFormController implements Initializable {
 
         tableFalta.setItems(null);
         tableFalta.setItems(data);
-
+        accaoBox.setValue(null);
+        searchBox.setValue(null);
     }
 
 
@@ -210,7 +189,7 @@ public class FXMLFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO fix bugs
+        
     }
 
 }

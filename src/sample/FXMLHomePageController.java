@@ -255,6 +255,10 @@ public class FXMLHomePageController implements Initializable {
                 insertStatement(query);
                 accao.clear();
                 accao_desc.clear();
+                date_start.setValue(null);
+                date_stop.setValue(null);
+                featureCombo.setValue(null);
+                combooBox.setValue(null);
 
             }
         }else {
@@ -309,11 +313,11 @@ public class FXMLHomePageController implements Initializable {
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("Confirma que os dados estão corretos?");
             alert.setContentText(" Criar Novo Registo de Formador");
-            String query2 = "INSERT INTO formador (nome,email,fk_cc) VALUES (" + "'" + nome_formador.getText() +
+            String query2 = "INSERT INTO formador (nome,email,cc) VALUES (" + "'" + nome_formador.getText() +
                     "'," + "'" + apelido_formador.getText() + "'," + "'" + cc.getText() + "');";
             Optional<ButtonType> result = alert.showAndWait();
-            String query1 = "INSERT INTO pessoa (username,password,nome,cc,tipo) VALUES (" + "'" + user.getText() +
-                    "'," + "'" + encode + "'," + "'" + nome_formador.getText() + "','" + cc.getText() + "' ,'Formador');";
+            String query1 = "INSERT INTO users (username,password,estado) VALUES (" + "'" + user.getText() +
+                    "'," + "'" + encode + "','true');";
 
 
 
@@ -416,7 +420,7 @@ public class FXMLHomePageController implements Initializable {
     protected static boolean isUsernameTaken(String username) throws SQLException {
         MysqlConnect dc = null;
         Connection conn = dc.ConnectDb() ;
-        PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM pessoa WHERE username =" +
+        PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM users WHERE username =" +
                 " '"+username+"';");
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();

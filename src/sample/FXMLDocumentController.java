@@ -25,6 +25,9 @@ import java.util.ResourceBundle;
 
 /*
  * Created by pc on 11/10/16.
+ *
+ * https://www.dailycred.com/article/bcrypt-calculator
+ *
  */
 
 import java.io.IOException;
@@ -121,22 +124,19 @@ public class FXMLDocumentController implements Initializable {
 
     private void lockAccount(String block) throws SQLException {
         FXMLHomePageController.isUsernameTaken(block);
-        String query = "UPDATE form2.pessoa SET pessoa.estado='1'  WHERE (pessoa.username ='"+block+"' And cc <>'0');";
+        String query = "UPDATE form2.users SET users.enabled=true WHERE (username='"+block+"' and userid <> 0);";
         if(FXMLHomePageController.isUsernameTaken(block)){
             System.out.println(query);
             FXMLHomePageController.insertStatement(query);
-            System.out.println("Já foste!");
-
+            System.out.println("STATUS ---> User blocked: "+block);
         }
-
-
     }
 
 
     private boolean isValidCredentials() {
 
         boolean let_in = false;
-        System.out.println( "SELECT password FROM pessoa WHERE username LIKE '" + username_box.getText()+  "' AND estado = 0" );
+        System.out.println( "SELECT password FROM users WHERE username LIKE '" + username_box.getText()+  "' AND enabled = true" );
     
         Statement stmt = null;
         try {
@@ -145,9 +145,9 @@ public class FXMLDocumentController implements Initializable {
             conn.setAutoCommit(false);
             String passc = password_box.getText();
 
-            System.out.println("STATUS ---> Conectado com sucesso!");
+            System.out.println("STATUS ---> Conectado com sucesso na DB!");
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT password FROM pessoa WHERE username LIKE '" + username_box.getText()+  "' AND estado = 0" );
+            ResultSet rs = stmt.executeQuery( "SELECT password FROM users WHERE username LIKE '" + username_box.getText()+  "' AND enabled = true" );
 
 
             while ( rs.next() ) {
@@ -211,7 +211,6 @@ public class FXMLDocumentController implements Initializable {
                 System.out.println("FOO -> "+foo);
                 checkbox.setSelected(true);
                 controlChek();
-                    //input.close();
 
             }
             else if(prop.getProperty("chkbx").contains("OFF")) {

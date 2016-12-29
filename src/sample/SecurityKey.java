@@ -16,17 +16,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * The first 22 characters decode to a 16-byte value for the salt.
  * The remaining characters are cipher text to be compared for authentication.
  *
- * password #=> "secret1"
+ *
+ *  https://www.dailycred.com/article/bcrypt-calculator
  */
 
 
 class SecurityKey {
 
     static boolean autox(String pass1, String pass2){
-        System.out.println("Pass TXT: "+pass1);
-        System.out.println("Crypt Pass: "+pass2);
         if(BCrypt.checkpw(pass1,pass2)){
-            System.out.println("pois eh igual");
+            System.out.println("Password OK");
             return true;
         }
         return false;
