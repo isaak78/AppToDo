@@ -10,10 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -31,6 +28,7 @@ public class FXMLFrmdController implements Initializable {
     @FXML private TableColumn<UserFalta, String> DataFalta;
     @FXML private TableColumn<UserFalta, String> FaltaMarca;
     @FXML private TableColumn<UserFalta, String> Contacto;
+    @FXML private TableColumn<UserFalta, String> Just;
     @FXML private DatePicker date_start;
     @FXML private DatePicker date_stop;
     @FXML private CheckBox chkTodos;
@@ -66,27 +64,41 @@ public class FXMLFrmdController implements Initializable {
     @FXML
     private void connectToDataFaltas (ActionEvent actionEvent) {
         dc = new MysqlConnect();
-        LocalDate ldefault = LocalDate.parse("2015-01-01");
-        Instant fimc = ldefault.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         LocalDate today = LocalDate.now();
-        fimc = today.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        java.util.Date dateIn = Date.from(Instant.from(fimc));
-
-        if(date_start.getValue() != null ){
-            LocalDate ldi = date_start.getValue();
-            System.out.println("Data Start = "+ldi);
+        LocalDate start;
+        LocalDate stop;
+        if(date_start.getValue() == null ){
+            start = today.withDayOfMonth(1);
+            date_start.setValue(start);
         }
-        if(date_stop.getValue() != null ){
-            LocalDate ldf = date_stop.getValue();
-            System.out.println("Data Stop = "+ldf);
+        if(date_stop.getValue() == null ){
+            stop = today.withDayOfMonth(today.lengthOfMonth());
+            date_stop.setValue(stop);
+        }
+        start = date_start.getValue();
+        stop = date_stop.getValue();
+
+        Instant iStart = start.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        Instant iStop = stop.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        java.util.Date dateOut = Date.from(Instant.from(iStop));
+        java.util.Date dateIn = Date.from(Instant.from(iStart));
+        if(!FXMLHomePageController.compareTo0(dateIn,dateOut)){
+            stop = date_start.getValue().withDayOfMonth(today.lengthOfMonth());
+            date_stop.setValue(stop);
         }
 
-        java.util.Date dateOut = Date.from(Instant.from(fimc));
+
+        java.util.Date dt = new java.util.Date();
+
+        java.text.SimpleDateFormat sdf =
+                new java.text.SimpleDateFormat("yyyy-MM-dd");
+
+        String sStart = sdf.format(dateIn);
+        String sStop = sdf.format(dateOut);
 
         String sQlQuery = "";
-
-        System.out.println("Data Start default = "+ldefault);
-        System.out.println("Data Hoje = "+today);
+        System.out.println("Data Start = "+sStart);
+        System.out.println("Data Stop = "+sStop);
 
 
         try {
@@ -94,39 +106,23 @@ public class FXMLFrmdController implements Initializable {
             data = FXCollections.observableArrayList();
             if(chkTodos.isSelected()){
                 System.out.println(" QUERY -> TODOS");
-                sQlQuery = "select id_formador, formador.nome ,faltaformador.data ,formador.email from formador" +
-                        " ,faltaformador where faltaformador.fk_formador = formador.id_formador ";
-
-            }
-            if(date_start.getValue() == null || (!FXMLHomePageController.compareTo0(dateIn,dateOut)) ){
-
-                fimc = ldefault.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-                dateIn = Date.from(Instant.from(fimc));
-                Date sqlDateIn = new Date(dateIn.getTime());
-                date_start.setValue(sqlDateIn.toLocalDate());
-                System.out.println("Data Start = "+ldefault);
-
-            }//todo testar melhor
-            if(date_stop.getValue() == null){
-                System.out.println("Data Start = "+ldefault);
-                System.out.println("Data Stop = "+today);
-                sQlQuery = "select '"+accaoBox.getValue()+"' and (data_h BETWEEN '"+ldefault+"' AND '"
-                        +today+"')";
-
+                sQlQuery = "select id_formador, formador.nome ,faltaformador.data ,horas ,email, cc from formador" +
+                        ",faltaformador where faltaformador.fk_formador=formador.id_formador " +
+                        "and (data between '"+sStart+"' AND '"+sStop+"')";
             }
 
             if (searchBox1.getValue() != null){
                 String searchNome = searchBox1.getValue();
-                // sQlQuery = "SELECT formando.nome FROM accao WHERE cod_accao LIKE = '"+accaoBox.getValue()+"';";
-                //System.out.println(sQlQuery);
-                sQlQuery = "select id ";
+                sQlQuery = "select id_formador, formador.nome ,faltaformador.data ,horas ,email, cc " +
+                        "from formador,faltaformador where faltaformador.fk_formador = formador.id_formador " +
+                        "and formador.nome='"+searchNome+"' and (data between '"+sStart+"' AND '"+sStop+"')";
             }
                 System.out.println(searchBox1.getValue());
                 System.out.println(sQlQuery);
 
                 ResultSet rs = conn.createStatement().executeQuery(sQlQuery);
                 while (rs.next()) {
-                    data.add(new UserFalta(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5),rs.getString(6)));
+                    data.add(new UserFalta(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(3),rs.getString(5)));
                 }
             } catch (SQLException ex) {
                 System.err.println("Erro ---> "+ex);
@@ -139,12 +135,13 @@ public class FXMLFrmdController implements Initializable {
 
 
 
-
         UserId.setCellValueFactory(new PropertyValueFactory<>("id"));
         UserName.setCellValueFactory(new PropertyValueFactory<>("nome"));
         DataFalta.setCellValueFactory(new PropertyValueFactory<>("datas"));
         FaltaMarca.setCellValueFactory(new PropertyValueFactory<>("falta"));
         Contacto.setCellValueFactory(new PropertyValueFactory<>("contacto"));
+        Just.setCellValueFactory(new PropertyValueFactory<>("cc"));
+
 
         tableFDFalta.setItems(null);
         tableFDFalta.setItems(data);
@@ -156,7 +153,7 @@ public class FXMLFrmdController implements Initializable {
     @FXML
     private void buildListaFormadores(){
         Connection conn = dc.ConnectDb();
-        System.out.println("----------------[  FIX OK Lista Formadores ]----------------");
+        System.out.println("----------------[ Lista Formadores ]----------------");
         searchBox1.getSelectionModel().clearSelection();
         listaFormadores.clear();
         try{

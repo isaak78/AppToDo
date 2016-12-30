@@ -7,7 +7,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
@@ -33,8 +32,8 @@ import java.io.IOException;
 
 public class FXMLHomePageController implements Initializable {
 
+
     @FXML private TextField user;
-    @FXML private TextField passcheck;
     @FXML private TextField pass;
     @FXML private DatePicker date_start;
     @FXML private DatePicker date_stop;
@@ -47,6 +46,10 @@ public class FXMLHomePageController implements Initializable {
     @FXML private TextField accao;
     @FXML private TextField accao_desc;
     @FXML private TextField curso;
+    @FXML private TextField nome_formando;
+    @FXML private TextField email_formando;
+    @FXML private TextField cc1;
+    @FXML private TextField nif1;
     @FXML private TextArea curso_desc;
     @FXML private Button btn1;
     @FXML private Button btn3;
@@ -57,22 +60,9 @@ public class FXMLHomePageController implements Initializable {
     @FXML ComboBox<String> accaoBox;
 
 
-    @FXML
-    private TextField nome_formando;
-
-    @FXML
-    private TextField email_formando;
-
-    @FXML
-    private TextField cc1;
-
-    @FXML
-    private TextField nif1;
-
-
 
     private MysqlConnect dc;
-    private String encode;
+    private String encode; //passwhord hash
     @FXML
     private void handleBtn1Action(ActionEvent event) throws IOException {
 
@@ -83,12 +73,11 @@ public class FXMLHomePageController implements Initializable {
         buildData();
         root = FXMLLoader.load(getClass().getResource("FXMLUser.fxml"));
         stage.setScene(new Scene(root));
-        stage.setTitle(" TODOIS -> Associar Formador");
+        stage.setTitle("----------------[ Associar Formador ]----------------");
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(btn1.getScene().getWindow());
 
         stage.showAndWait();
-        System.out.println("yiuuuuuupY");
 
     }
 
@@ -101,11 +90,10 @@ public class FXMLHomePageController implements Initializable {
         stage = new Stage();
         root = FXMLLoader.load(getClass().getResource("FXMLForm.fxml"));
         stage.setScene(new Scene(root));
-        stage.setTitle("TODOIS -> QUERY por NOME / ACÇÃO / DATE WHERE (date BETWEEN x AND x)");
+        stage.setTitle("----------------[ Faltas Formandos ]----------------");
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(btnF.getScene().getWindow());
         stage.showAndWait();
-        System.out.println("yiuuuuuupY");
     }
 
 
@@ -118,11 +106,10 @@ public class FXMLHomePageController implements Initializable {
         stage = new Stage();
         root = FXMLLoader.load(getClass().getResource("FXMLFrmd.fxml"));
         stage.setScene(new Scene(root));
-        stage.setTitle("TODOIS -> QUERY por NOME / ACÇÃO / DATE WHERE (date BETWEEN x AND x)");
+        stage.setTitle("----------------[ Faltas Formadores ]----------------");
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(btnF.getScene().getWindow());
         stage.showAndWait();
-        System.out.println("FiNiSH HiM");
     }
 
 
@@ -171,12 +158,11 @@ public class FXMLHomePageController implements Initializable {
         buildData();
         root = FXMLLoader.load(getClass().getResource("FXMLStudent.fxml"));
         stage.setScene(new Scene(root));
-        stage.setTitle(" TODOIS -> accaoaluno fk_formando como PK");
+        stage.setTitle("----------------[ Associar Formando ]----------------");
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(btn1.getScene().getWindow());
 
         stage.showAndWait();
-        System.out.println("yiuuuuuupY 2");
 
         ArrayList <String[]> result = new ArrayList<String[]>();
         Connection conn = dc.ConnectDb();
@@ -194,12 +180,8 @@ public class FXMLHomePageController implements Initializable {
             }
             result.add(row);
         }
-        UtilsForm.alertMsg(Alert.AlertType.WARNING,("IiiiuUUPPYy!"));
 
       //  insertStatement(query);
-        System.out.println(" ArrayList dos Cursos");
-        for (String[] res : result)
-            System.out.println(res);
 
     }
 
@@ -279,7 +261,6 @@ public class FXMLHomePageController implements Initializable {
 
         curso.clear();
         curso_desc.clear();
-        System.out.println("yaYAHha Clear OK!");
 
     }
 
@@ -288,12 +269,8 @@ public class FXMLHomePageController implements Initializable {
 
     @FXML
     private void doneButtonAction(ActionEvent event) throws IOException, SQLException {
-        String teste = "";
-        /**
-         *      testar o inserir turmas + sql
-         */
+
         System.out.println("----------------[  ADD Formador  ]----------------");
-        ArrayList<String> validaErrors = new ArrayList<>();
         String cartaoc = cc.getText();
         if(!UtilsForm.luhnCheck(cartaoc)){
             cc.clear();
@@ -306,18 +283,17 @@ public class FXMLHomePageController implements Initializable {
         }
 
 
-        if ((isRegFormadOk()) && (nif.getText().matches("[0-9]{9}")) && (UtilsForm.luhnCheck(cartaoc))){
-            UtilsForm.isValidNif(Integer.parseInt(nif.getText()));
+        if (isRegFormadOk()){ //&& (nif.getText().matches("[0-9]{9}") && UtilsForm.luhnCheck(cartaoc))){ <- VALIDA
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("Confirma que os dados estão corretos?");
             alert.setContentText(" Criar Novo Registo de Formador");
-            String query2 = "INSERT INTO formador (nome,email,cc) VALUES (" + "'" + nome_formador.getText() +
-                    "'," + "'" + apelido_formador.getText() + "'," + "'" + cc.getText() + "');";
+            String query2 = "INSERT INTO formador (nome,email,cc,nif) VALUES ('" + nome_formador.getText() +
+                    "'," + "'" + apelido_formador.getText() + "'," + "'" + cc.getText() +"', '"+nif.getText()+"');";
             Optional<ButtonType> result = alert.showAndWait();
-            String query1 = "INSERT INTO users (username,password,estado) VALUES (" + "'" + user.getText() +
-                    "'," + "'" + encode + "','true');";
+            String query1 = "INSERT INTO users (username,password,enabled) VALUES (" + "'" + user.getText() +
+                    "'," + "'" + encode + "','1');";
 
 
 
@@ -338,9 +314,7 @@ public class FXMLHomePageController implements Initializable {
 
     @FXML
     private void doneButton2Action(ActionEvent event) throws IOException, SQLException {
-        /**
-         *      testar o inserir turmas + sql
-         */
+
         System.out.println("----------------[  ADD Formando  ]----------------");
         String cartaoc = cc1.getText();
         if(!UtilsForm.luhnCheck(cartaoc)){
@@ -363,26 +337,14 @@ public class FXMLHomePageController implements Initializable {
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("Confirma que os dados estão corretos?");
             alert.setContentText(" Criar Novo Registo de Formador");
-            String query2 = "INSERT INTO formando (nome,email,fk_cc) VALUES (" + "'" + nome_formando.getText() +
+            String query = "INSERT INTO formando (nome,email,fk_cc) VALUES (" + "'" + nome_formando.getText() +
                     "'," + "'" + email_formando.getText() + "'," + "'" + cc1.getText() + "');";
             Optional<ButtonType> result = alert.showAndWait();
-            String query1 = "INSERT INTO pessoa (nome,cc,tipo) VALUES ('" + nome_formando.getText()
-                    + "','" + cc1.getText() + "' ,'formando');";
-
-
-
             if (result.get() == ButtonType.OK){
-                System.out.println("QUERY : " + query1);
-                insertStatement(query1);
-                insertStatement("unlock tables");
-
-                System.out.println("QUERY : " + query2);
-                insertStatement(query2);
-
+                System.out.println("QUERY : " + query);
+                insertStatement(query);
                 System.out.println("----------------[  OK  ]----------------");
             }
-
-
         }
     }
 
@@ -397,21 +359,29 @@ public class FXMLHomePageController implements Initializable {
 
     private boolean isRegFormadOk() throws SQLException {
         System.out.println(pass.getText());
-        System.out.println(passcheck.getText());
         if(isUsernameTaken(user.getText()) || !UtilsForm.validateUsername(user.getText()) ){
             user.clear();
             invalid_cc.setText("Escolha outro UserName");
             return false;
         }
 
-        if((pass.getText()).equals(passcheck.getText()) && UtilsForm.validaPassword(pass.getText())){
-            System.out.println(passcheck.getText());
+        if(UtilsForm.validaPassword(pass.getText())){
+            System.out.println(pass.getText());
             encode = SecurityKey.enCodePass(pass.getText());
             System.out.println("Pass hash: "+encode);
             return true;
+        } if(pass.getText().isEmpty()){
+            System.out.println("sherL0CK3Dhomes");
+            encode = SecurityKey.enCodePass("sherL0CK3Dhomes");
+            System.out.println("Pass hash: "+encode);
+            UtilsForm.alertMsg(Alert.AlertType.INFORMATION,(" Default PassWord:\n sherL0CK3Dhomes\n" +
+                    "Solicite primeiro desbloqueio ao Suporte Técnico!"));
+
+            return true;
+
         }
         pass.clear();
-        passcheck.clear();
+
         return false;
     }
 
@@ -464,8 +434,6 @@ public class FXMLHomePageController implements Initializable {
             stmt.close();
             conn.commit();
             conn.close();
-
-            //UtilsForm.alertMsg(Alert.AlertType.INFORMATION,(" Dados Validados!"));
 
         }catch ( Exception e ) {
 

@@ -6,12 +6,15 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.ImageInput?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="250.0" prefWidth="350.0" stylesheets="@CSStyle.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="206.0" prefWidth="356.0" stylesheets="@CSStyle.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.FXMLDocumentController">
     <children>
-        <Button fx:id="button" layoutX="198.0" layoutY="153.0" onAction="#handleButtonAction" prefHeight="30.0" prefWidth="86.0" stylesheets="@CSStyle.css" text="Login" />
+        <Button fx:id="button" layoutX="199.0" layoutY="161.0" onAction="#handleButtonAction" prefHeight="30.0" prefWidth="86.0" stylesheets="@CSStyle.css" text="Login" />
         <Label fx:id="label" layoutX="101.0" layoutY="24.0" minHeight="16" minWidth="69" prefHeight="37.0" prefWidth="195.0" text="Gestao da Formação" textAlignment="CENTER" textFill="#1c1772" textOverrun="LEADING_WORD_ELLIPSIS">
          <font>
             <Font name="DejaVu Sans Mono Oblique" size="16.0" />
@@ -19,10 +22,18 @@
          <effect>
             <ImageInput />
          </effect></Label>
-      <TextField fx:id="username_box" layoutX="75.0" layoutY="76.0" prefHeight="32.0" prefWidth="209.0" promptText="Username" />
-      <Label fx:id="invalid_label" layoutX="43.0" layoutY="187.0" prefHeight="50.0" prefWidth="287.0" textFill="#ee0b0b" />
-      <PasswordField fx:id="password_box" layoutX="76.0" layoutY="118.0" prefHeight="32.0" prefWidth="209.0" promptText="Password" />
-      <Label fx:id="isConnected" layoutX="61.0" layoutY="151.0" prefHeight="37.0" prefWidth="148.0" textFill="#3dd30f" />
-      <CheckBox fx:id="checkbox" layoutX="76.0" layoutY="161.0" mnemonicParsing="false" text="CheckBox" />
+      <TextField fx:id="username_box" alignment="CENTER" layoutX="74.0" layoutY="84.0" prefHeight="32.0" prefWidth="209.0" promptText="Username" />
+      <Label fx:id="invalid_label" layoutX="43.0" layoutY="184.0" prefHeight="50.0" prefWidth="287.0" textFill="#ee0b0b" />
+      <PasswordField fx:id="password_box" alignment="CENTER" layoutX="74.0" layoutY="122.0" prefHeight="32.0" prefWidth="209.0" promptText="Password" />
+      <Label fx:id="isConnected" layoutX="60.0" layoutY="176.0" prefHeight="37.0" prefWidth="148.0" textFill="#3dd30f" />
+      <CheckBox fx:id="checkbox" layoutX="74.0" layoutY="167.0" mnemonicParsing="false" text="Memorizar" />
+      <ImageView fitHeight="58.0" fitWidth="186.0" layoutX="90.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@imagens/grupo2.jpg" />
+         </image>
+         <effect>
+            <InnerShadow />
+         </effect>
+      </ImageView>
     </children>
 </AnchorPane>

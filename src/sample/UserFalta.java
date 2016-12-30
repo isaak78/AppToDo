@@ -18,6 +18,8 @@ public class UserFalta {
     private final StringProperty falta;
     private final StringProperty justificada;
 
+    public void userFalta(){}
+
 
 
     public UserFalta(String id, String nome, String datas, String ufcd, String falta, String justificada) {

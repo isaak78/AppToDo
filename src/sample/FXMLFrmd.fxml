@@ -20,10 +20,11 @@
                   <TableView fx:id="tableFDFalta" layoutX="23.0" layoutY="187.0" onSort="#connectToDataFaltas" prefHeight="196.0" prefWidth="480.0">
                     <columns>
                       <TableColumn fx:id="UserId" prefWidth="25.0" text="id" />
-                      <TableColumn fx:id="UserName" prefWidth="137.0" text="Nome" />
-                        <TableColumn fx:id="DataFalta" prefWidth="117.0" text="Data" />
-                        <TableColumn fx:id="FaltaMarca" prefWidth="79.0" text="Falta" />
-                        <TableColumn fx:id="Contacto" prefWidth="79.0" text="Contacto" />
+                      <TableColumn fx:id="UserName" prefWidth="209.0" text="Nome" />
+                        <TableColumn fx:id="DataFalta" prefWidth="66.0" text="Horas" />
+                        <TableColumn fx:id="FaltaMarca" prefWidth="179.0" text="Data" />
+                        <TableColumn fx:id="Contacto" prefWidth="179.0" text="Cont" visible="false" />
+                        <TableColumn fx:id="Just" prefWidth="179.0" text="Cc" visible="false" />
                     </columns>
                   </TableView>
                   <Label layoutX="176.0" layoutY="29.0" prefHeight="43.0" prefWidth="179.0" text="MAPA DE FALTAS FORMADORES" textAlignment="CENTER" textFill="#0b0d32" wrapText="true">

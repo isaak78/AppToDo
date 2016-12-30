@@ -65,15 +65,20 @@ public class FXMLDocumentController implements Initializable {
 
 
 
-        Properties prop = new Properties();
 
 
 
 
         if (isValidCredentials()) {
-            OutputStream output = new FileOutputStream("config.properties");
+            Properties defaultProps = new Properties();
+            FileInputStream in = new FileInputStream("config.properties");
+            Properties prop = new Properties(defaultProps);
+
+            prop.load(in);
 
             if(checkbox.isSelected()){
+                OutputStream output = new FileOutputStream("config.properties");
+
                 System.out.println(" CheckBoX ON");
                 prop.setProperty("chkbx", "_ON");
                 prop.setProperty("username", username_box.getText());
@@ -81,6 +86,7 @@ public class FXMLDocumentController implements Initializable {
                 prop.store(output, null);
             }
            if(!(checkbox.isSelected())){
+               OutputStream output = new FileOutputStream("config.properties");
 
                 System.out.println(" CheckBoX OFF");
                 prop.setProperty("username", " ");
@@ -137,7 +143,7 @@ public class FXMLDocumentController implements Initializable {
 
         boolean let_in = false;
         System.out.println( "SELECT password FROM users WHERE username LIKE '" + username_box.getText()+  "' AND enabled = true" );
-    
+
         Statement stmt = null;
         try {
             Connection conn = dc.ConnectDb();
@@ -152,8 +158,7 @@ public class FXMLDocumentController implements Initializable {
 
             while ( rs.next() ) {
                  if (!(rs.getString("password").isEmpty())) {
-                     //String  username = rs.getString("username");
-                     //System.out.println( "Username = " + username );
+
                      String password = rs.getString("password");
                      System.out.println("Password = " + password);
                      if(SecurityKey.autox(passc,password))
@@ -171,12 +176,12 @@ public class FXMLDocumentController implements Initializable {
             }
             System.out.println("STATUS ---> operação realizada com sucesso!");
             return let_in;
-        
+
     }
 
     protected void controlChek(){
         Properties prop = new Properties();
-        try (InputStream input = new FileInputStream("config.properties")) {
+        try ( FileInputStream input = new FileInputStream("config.properties")) {
             // load a properties file
             prop.load(input);
             username_box.setText(prop.getProperty("username"));
@@ -192,18 +197,18 @@ public class FXMLDocumentController implements Initializable {
     }
 
 
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // username_box.clear();
         checkbox.setSelected(false);
 
-        Properties prop = new Properties();
-        InputStream in = null;
 
         try {
+            Properties defaultProps = new Properties();
+            FileInputStream in = new FileInputStream("config.properties");
+            Properties prop = new Properties(defaultProps);
 
-            in = new FileInputStream("config.properties");
             prop.load(in);
             String foo = prop.getProperty("chkbx");
             System.out.println(foo);
